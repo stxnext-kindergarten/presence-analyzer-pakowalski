@@ -20,7 +20,6 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
     """
     Views tests.
     """
-
     def setUp(self):
         """
         Before each test, set up a environment.
