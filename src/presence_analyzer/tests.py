@@ -100,6 +100,25 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         presence_data = self.client.get('/api/v1/presence_weekday/9')
         self.assertEqual(presence_data.status_code, 404)
 
+    def test_presence_start_end_view(self):
+        start_end_data = self.client.get('/api/v1/presence_start_end/10')
+        self.assertEqual(start_end_data.content_type, 'application/json')
+        self.assertEqual(start_end_data.status_code, 200)
+        data = json.loads(start_end_data.data)
+        self.assertEqual(data, [
+            ['Mon', 0, 0],
+            ['Tue', 34745.0, 64792.0],
+            ['Wed', 33592.0, 58057.0],
+            ['Thu', 38926.0, 62631.0],
+            ['Fri', 0, 0],
+            ['Sat', 0, 0],
+            ['Sun', 0, 0],
+        ])
+
+    def test_presence_start_end_view_404(self):
+        start_end_data_data = self.client.get('/api/v1/presence_start_end/9')
+        self.assertEqual(start_end_data_data.status_code, 404)
+
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
     """
@@ -201,6 +220,19 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         self.assertEqual(mean_data, 31613.8)
         mean_data = utils.mean([])
         self.assertEqual(mean_data, 0)
+
+    def test_group_start_end_weekday(self):
+        data = utils.get_data()
+        start_end_data = utils.group_start_end_weekday(data[10])
+        self.assertListEqual(start_end_data, [
+            {'start': [], 'end': []},
+            {'start': [34745], 'end': [64792]},
+            {'start': [33592], 'end': [58057]},
+            {'start': [38926], 'end': [62631]},
+            {'start': [], 'end': []},
+            {'start': [], 'end': []},
+            {'start': [], 'end': []}
+        ])
 
 
 def suite():
