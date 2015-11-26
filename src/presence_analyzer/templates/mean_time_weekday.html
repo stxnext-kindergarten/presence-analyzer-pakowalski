@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+
+{% block jsfile %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/mean_time.js') }}"></script>
+{% endblock %}
+
+{% block content_title %}Presence mean time by weekday{% endblock %}
