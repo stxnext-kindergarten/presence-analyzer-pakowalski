@@ -4,8 +4,9 @@ Defines views.
 """
 
 import calendar
-from flask import abort, redirect, render_template
-from jinja2 import TemplateNotFound
+import mako
+from flask import abort, redirect
+from flask.ext.mako import render_template
 
 from presence_analyzer.main import app
 from presence_analyzer.utils import (
@@ -114,5 +115,5 @@ def render_all(temp_name):
     """
     try:
         return render_template(temp_name, selected=temp_name)
-    except TemplateNotFound:
-        return render_template('notfound.html')
+    except mako.exceptions.TopLevelLookupException:
+        abort(404)
