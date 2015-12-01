@@ -4,9 +4,10 @@ Helper functions used in views.
 """
 
 import csv
-from json import dumps
-from functools import wraps
 from datetime import datetime
+from functools import wraps
+from json import dumps
+from lxml import etree
 
 from flask import Response
 
@@ -30,6 +31,33 @@ def jsonify(function):
             mimetype='application/json'
         )
     return inner
+
+
+def users_xmldata():
+    """
+    Extracts data from XML file and groups it by user_name.
+    """
+    data = {}
+    with open(app.config['DATA_XML'], 'r') as xml_file:
+        for event, element in etree.iterparse(xml_file, tag='server'):
+            protocol = element.findtext('protocol')
+            host = element.findtext('host')
+            port = element.findtext('port')
+        xml_file.seek(0)
+        for event, element in etree.iterparse(xml_file, tag='user'):
+            if element.tag == 'user':
+                user_id = element.attrib.get('id')
+            image = element.findtext('avatar')
+            link_to_avatar = '{}://{}:{}{}'.format(protocol, host, port, image)
+            user_name = element.findtext('name')
+            user_name = user_name.encode('utf-8')
+
+            data[user_id] = {
+                'user_name': user_name,
+                'link_to_avatar': link_to_avatar,
+            }
+
+    return data
 
 
 def get_data():
