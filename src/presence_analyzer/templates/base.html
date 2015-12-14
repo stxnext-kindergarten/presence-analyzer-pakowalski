@@ -14,6 +14,7 @@
     <script type="text/javascript" src="${ url_for('static', filename='js/jquery.min.js') }"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <%block name="jsfile"></%block>
+    <script type="text/javascript" src="${ url_for('static', filename='js/avatar.js') }"></script>
 </head>
 
 <body>
@@ -42,6 +43,8 @@
                 <select id="user_id" style="display: none">
                     <option value="">--</option>
                 </select>
+                <div id="image" style="display: none">
+                </div>
                 <div id="chart_div" style="display: none">
                 </div>
                 <div id="loading">

@@ -4,6 +4,7 @@
 
 import os
 import sys
+import urllib
 from functools import partial
 
 import paste.script.command
@@ -111,3 +112,12 @@ def run():
         _serve('stop', dry_run=dry_run)
 
     werkzeug.script.run()
+
+
+def xml():
+    xmldata = urllib.urlretrieve(
+        'http://sargo.bolt.stxnext.pl/users.xml',
+        'users.xml'
+    )
+
+    return xmldata

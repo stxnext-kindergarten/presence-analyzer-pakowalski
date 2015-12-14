@@ -3,10 +3,10 @@ google.load("visualization", "1", {packages:["corechart"], 'language': 'en'});
 (function($) {
     $(document).ready(function() {
         var loading = $('#loading');
-        $.getJSON("/api/v1/users", function(result) {
+        $.getJSON("/api/v2/users", function(result) {
             var dropdown = $("#user_id");
             $.each(result, function(item) {
-                dropdown.append($("<option />").val(this.user_id).text(this.name));
+                dropdown.append($("<option />").val(item).text(this.user_name));
             });
             dropdown.show();
             loading.hide();
@@ -24,6 +24,11 @@ google.load("visualization", "1", {packages:["corechart"], 'language': 'en'});
                     loading.hide();
                     var chart = new google.visualization.PieChart(chart_div[0]);
                     chart.draw(data, options);
+                }).fail(function() {
+                    chart_div.empty();
+                    chart_div.append("No data");
+                    chart_div.show();
+                    loading.hide();
                 });
             }
         });

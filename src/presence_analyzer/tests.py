@@ -130,6 +130,7 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         Before each test, set up a environment.
         """
         main.app.config.update({'DATA_CSV': TEST_DATA_CSV})
+        main.app.config.update({'DATA_XML': 'users_test.xml'})
 
     def tearDown(self):
         """
@@ -150,6 +151,27 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         self.assertEqual(
             data[10][sample_date]['start'],
             datetime.time(9, 39, 5)
+        )
+
+    def test_users_xmldata(self):
+        """
+        Test parsing of XML file.
+        """
+        data = utils.users_xmldata()
+        self.assertIsInstance(data, dict)
+        self.assertItemsEqual(
+            data['10'].keys(), [
+                'user_name',
+                'link_to_avatar'
+            ]
+        )
+        self.assertEqual(
+            data['10']['user_name'],
+            'Maciej Z.'
+        )
+        self.assertEqual(
+            data['153']['link_to_avatar'],
+            'https://intranet.stxnext.pl:443/api/images/users/153'
         )
 
     def test_group_by_weekday(self):

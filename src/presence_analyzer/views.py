@@ -15,6 +15,7 @@ from presence_analyzer.utils import (
     group_start_end_weekday,
     jsonify,
     mean,
+    users_xmldata
 )
 
 import logging
@@ -40,6 +41,30 @@ def users_view():
         {'user_id': i, 'name': 'User {0}'.format(str(i))}
         for i in data.keys()
     ]
+
+
+@app.route('/api/v2/users', methods=['GET'])
+@jsonify
+def users_xml():
+    """
+    Users listing from XML file.
+    """
+    data = users_xmldata()
+    return data
+
+
+@app.route('/api/v2/users/<int:user_id>', methods=['GET'])
+@jsonify
+def users_xml_view(user_id):
+    """
+    Returns mean presence time of given user grouped by weekday.
+    """
+    data = users_xmldata()
+    if (str(user_id)) not in data:
+        log.debug('User %s not found!', user_id)
+        abort(404)
+
+    return data[str(user_id)]
 
 
 @app.route('/api/v1/mean_time_weekday/<int:user_id>', methods=['GET'])
