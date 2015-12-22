@@ -4,10 +4,11 @@ Helper functions used in views.
 """
 
 import csv
-from datetime import datetime
+from datetime import datetime, timedelta
 from functools import wraps
 from json import dumps
 from lxml import etree
+from threading import Lock
 
 from flask import Response
 
@@ -15,6 +16,37 @@ from presence_analyzer.main import app
 
 import logging
 log = logging.getLogger(__name__)  # pylint: disable=invalid-name
+
+
+CACHE = {}
+
+
+def cache(seconds):
+    """
+    Cache specified function.
+    """
+    lock = Lock()
+
+    def _cache(function):
+        def __cache(*args):
+            func_name = function.__name__
+            sec = timedelta(seconds=seconds)
+            check = (
+                func_name in CACHE and
+                datetime.now() < CACHE[func_name]['time'] + sec
+            )
+            with lock:
+                if check:
+                    return CACHE[func_name]['result']
+
+                result = function(*args)
+                CACHE[func_name] = {
+                    'time': datetime.now(),
+                    'result': result
+                }
+                return result
+        return __cache
+    return _cache
 
 
 def jsonify(function):
@@ -60,6 +92,7 @@ def users_xmldata():
     return data
 
 
+@cache(600)
 def get_data():
     """
     Extracts presence data from CSV file and groups it by user_id.

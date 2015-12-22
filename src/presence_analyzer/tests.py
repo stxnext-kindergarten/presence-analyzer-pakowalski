@@ -138,6 +138,21 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
         """
         pass
 
+    def test_cache(self):
+        """
+        Test cache.
+        """
+        key = 'get_data'
+        data = utils.get_data()
+        CACHE = utils.CACHE
+        self.assertEqual(CACHE[key]['result'], data)
+        self.assertIsInstance(CACHE, dict)
+        self.assertIsInstance(data, dict)
+        self.assertEqual(CACHE[key].keys(), ['result', 'time'])
+        date_now = datetime.datetime.now()
+        self.assertLess(CACHE[key]['time'], date_now)
+        self.assertEqual(CACHE[key]['result'], data)
+
     def test_get_data(self):
         """
         Test parsing of CSV file.
