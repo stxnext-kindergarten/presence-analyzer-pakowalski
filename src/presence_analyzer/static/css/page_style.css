@@ -37,12 +37,13 @@ body {
 }
 
 #header a {
+    font-size: 0.8em;
     text-decoration: none;
     display: block;
     background: #eee;
     padding: 0.24em 1em;
     color: #00c;
-    width: 12em;
+    width: 10em;
     text-align: center;
 }
 
@@ -56,6 +57,7 @@ body {
 
 #header #selected a {
     position: relative;
+    width: 140px;
     top: 1px;
     background: white;
     color: black;

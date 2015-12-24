@@ -119,6 +119,19 @@ class PresenceAnalyzerViewsTestCase(unittest.TestCase):
         start_end_data_data = self.client.get('/api/v1/presence_start_end/9')
         self.assertEqual(start_end_data_data.status_code, 404)
 
+    def test_top5_weeks_view(self):
+        top5_data = self.client.get('/api/v1/top5/10')
+        self.assertEqual(top5_data.content_type, 'application/json')
+        self.assertEqual(top5_data.status_code, 200)
+        data = json.loads(top5_data.data)
+        self.assertEqual(data, [
+            ['2013-09-09 - 2013-09-15', 78217],
+        ])
+
+    def test_top5_weeks_view_404(self):
+        top5_data = self.client.get('/api/v1/top5/9')
+        self.assertEqual(top5_data.status_code, 404)
+
 
 class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
     """
@@ -270,6 +283,16 @@ class PresenceAnalyzerUtilsTestCase(unittest.TestCase):
             {'start': [], 'end': []},
             {'start': [], 'end': []}
         ])
+
+    def test_group_top5_weeks(self):
+        data = utils.get_data()
+        top5_data = utils.group_top5_weeks(data[10])
+        self.assertEqual(top5_data, {'2013-09-09 - 2013-09-15': 78217})
+        top5_data = utils.group_top5_weeks(data[11])
+        self.assertEqual(top5_data, {
+            '2013-09-02 - 2013-09-08': 22999,
+            '2013-09-09 - 2013-09-15': 95403
+        })
 
 
 def suite():

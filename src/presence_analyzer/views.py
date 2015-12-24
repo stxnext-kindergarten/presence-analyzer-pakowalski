@@ -13,6 +13,7 @@ from presence_analyzer.utils import (
     get_data,
     group_by_weekday,
     group_start_end_weekday,
+    group_top5_weeks,
     jsonify,
     mean,
     users_xmldata
@@ -129,8 +130,24 @@ def presence_start_end_view(user_id):
         (calendar.day_abbr[weekday], value['start'], value['end'])
         for weekday, value in enumerate(weekdays)
     ]
-
     return result
+
+
+@app.route('/api/v1/top5/<int:user_id>', methods=['GET'])
+@jsonify
+def top5_weeks_view(user_id):
+    """
+    Returns top 5 weeks in work.
+    """
+    data = get_data()
+    if user_id not in data:
+        log.debug('User %s not found!', user_id)
+        abort(404)
+
+    weekdays = group_top5_weeks(data[user_id])
+    result = sorted(weekdays.items(), key=lambda x: x[1], reverse=True)
+
+    return result[0:5]
 
 
 @app.route('/<string:temp_name>', methods=['GET'])

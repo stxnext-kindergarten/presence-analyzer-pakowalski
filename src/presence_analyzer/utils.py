@@ -178,4 +178,34 @@ def group_start_end_weekday(items):
         end = items[date]['end']
         result[date.weekday()]['start'].append(seconds_since_midnight(start))
         result[date.weekday()]['end'].append(seconds_since_midnight(end))
+
     return result
+
+
+def group_top5_weeks(items):
+    """
+    Sum hours of top weeks.
+    """
+    value = {}
+    result = {}
+
+    for date in items:
+        day_of_week = date.weekday()
+        start_week = date - timedelta(days=day_of_week)
+        end_week = date + timedelta(days=6 - day_of_week)
+        string = "{} - {}".format(start_week, end_week)
+
+        try:
+            if value[string]:
+                continue
+        except KeyError:
+            value[string] = 0
+
+        for day in([start_week + timedelta(days=days) for days in range(7)]):
+            if day in items:
+                start = items[day]['start']
+                end = items[day]['end']
+                result[day.weekday()] = interval(start, end)
+                value[string] += result[day.weekday()]
+
+    return value
