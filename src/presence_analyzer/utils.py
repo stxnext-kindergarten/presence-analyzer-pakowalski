@@ -4,6 +4,7 @@ Helper functions used in views.
 """
 
 import csv
+import locale
 from datetime import datetime, timedelta
 from functools import wraps
 from json import dumps
@@ -69,6 +70,7 @@ def users_xmldata():
     """
     Extracts data from XML file and groups it by user_name.
     """
+    locale.setlocale(locale.LC_COLLATE, 'pl_PL.utf-8')
     data = {}
     with open(app.config['DATA_XML'], 'r') as xml_file:
         for event, element in etree.iterparse(xml_file, tag='server'):
@@ -89,7 +91,11 @@ def users_xmldata():
                 'link_to_avatar': link_to_avatar,
             }
 
-    return data
+    return sorted(
+        data.iteritems(),
+        key=lambda x: x[1]['user_name'],
+        cmp=locale.strcoll
+    )
 
 
 @cache(600)
