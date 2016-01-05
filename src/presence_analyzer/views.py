@@ -61,6 +61,7 @@ def users_xml_view(user_id):
     Returns mean presence time of given user grouped by weekday.
     """
     data = users_xmldata()
+    data = dict(data)
     if (str(user_id)) not in data:
         log.debug('User %s not found!', user_id)
         abort(404)
